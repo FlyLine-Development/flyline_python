@@ -1,13 +1,6 @@
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-from aiohttp import ClientResponse
-
-from .errors import (
-    AuthenticationFailed,
-    FlylineItemNotFound,
-    FlylinePayloadError,
-    FlylineServerError,
-)
+from .errors import FlylinePayloadError
 from .schemas import (
     Aircraft,
     AircraftList,
@@ -39,19 +32,9 @@ Resource = Union[Aircraft, Airline, Airport, Beverage, City, Entertainment, Food
 
 
 class AirResourcesAPI:
-    @classmethod
-    async def parse_res(cls, response: ClientResponse):
-        if response.status == 401:
-            raise AuthenticationFailed()
-        if response.status == 404:
-            raise FlylineItemNotFound()
-        elif response.status != 200:
-            raise FlylineServerError()
-        return await response.json()
-
     async def _get_resources(self, _class: Any, endpoint: str) -> Tuple[PaginationMeta, List[Resource]]:
         async with self.session.get(f"{self.BASE_URL}/{endpoint}/") as response:
-            res = await self.parse_res(response)
+            res = await self.parse_response(response)
             try:
                 pagination_meta = res["meta"]
                 data = res["data"]
@@ -62,7 +45,7 @@ class AirResourcesAPI:
 
     async def _get_resource(self, _class: Any, endpoint: str, code: str) -> Optional[Resource]:
         async with self.session.get(f"{self.BASE_URL}/{endpoint}/{code}/") as response:
-            res = await self.parse_res(response)
+            res = await self.parse_response(response)
             try:
                 data = res["data"]
             except KeyError:
@@ -92,7 +75,7 @@ class AirResourcesAPI:
 
     async def get_airports_by_city(self, city_iata_code: str) -> List[Airport]:
         async with self.session.get(f"{self.BASE_URL}/cities/{city_iata_code}/airports/") as response:
-            res = await self.parse_res(response)
+            res = await self.parse_response(response)
             return Airport.from_json(res.get("data", []))
 
     async def get_cities(self) -> CityList:
@@ -112,7 +95,7 @@ class AirResourcesAPI:
             params["cabin_class"] = cabin_class
 
         async with self.session.get(f"{self.BASE_URL}/cabin-booking/", params=params) as response:
-            res = await self.parse_res(response)
+            res = await self.parse_response(response)
             return {carrier: CabinClassMapping.from_json(data) for carrier, data in res.items()}
 
     async def get_seat_types(self) -> SeatTypeList:

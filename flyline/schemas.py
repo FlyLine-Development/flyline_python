@@ -397,7 +397,7 @@ class Schedule(FlylineBaseDataClass):
     aircraft: str
     distance: int
     departure: ScheduleDeparture
-    arrrival: ScheduleArrival
+    arrival: ScheduleArrival
 
 
 # Seat Map API Schemas
