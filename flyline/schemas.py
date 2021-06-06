@@ -421,8 +421,8 @@ class SeatMap(FlylineBaseDataClass):
     airline_code: str
     airline_name: str
     aircraft_code: str
-    seat_map: str
-    seat_map_key: str
+    # seat_map: str
+    # seat_map_key: str
     overview: str
     seats: List[SeatMapByClass]
     traveler_photos: Optional[List[str]] = None
