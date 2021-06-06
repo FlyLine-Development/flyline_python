@@ -1,24 +1,36 @@
 import asyncio
-from datetime import date, timedelta
+import datetime
+import os
 
 from flyline import FlylineClient
 
-client = FlylineClient("")
-
 
 async def main():
-    tomorrow = (date.today() + timedelta(days=1)).isoformat()
-    data = {
-        "cabin_class": "economy",
-        "departure": "DFW",
-        "arrival": "LAX",
-        "departure_date": tomorrow,
-        "flight_no": "2812",
-        "carrier": "AA",
-    }
-    res = await client.get_airattributes_by_flight_number(data)
-    return res
+    key = os.getenv("FLYLINE_TOKEN")
+    async with FlylineClient(key) as client:
+        tomorrow = datetime.date.today() + datetime.timedelta(days=1)
+        # Attributes by Flight no
+        data = {
+            "cabin_class": "economy",
+            "departure": "DFW",
+            "arrival": "LAX",
+            "departure_date": tomorrow.isoformat(),
+            "flight_no": "2812",
+            "carrier": "AA",
+        }
+        res = await client.get_airattributes_by_flight_number(data=data)
+        print(res)
+
+        # Attributes by Route
+        data = {
+            "cabin_class": "economy",
+            "slices": [{"departure": {"code": "DFW", "date": tomorrow.isoformat()}, "arrival": {"code": "LAX"}}],
+            "passengers": 1,
+        }
+        res = await client.get_airattributes_by_route(data=data)
+        print(res)
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
