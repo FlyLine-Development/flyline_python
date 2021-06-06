@@ -2,7 +2,12 @@ import asyncio
 
 from aiohttp import ClientResponse, ClientSession
 
-from .errors import AuthenticationFailed, FlylineItemNotFound, FlylineServerError
+from .errors import (
+    AuthenticationFailed,
+    FlylineBadRequest,
+    FlylineItemNotFound,
+    FlylineServerError,
+)
 
 
 class FlylineBaseClient:
@@ -18,11 +23,16 @@ class FlylineBaseClient:
     async def parse_response(cls, response: ClientResponse):
         if response.status == 401:
             raise AuthenticationFailed()
-        if response.status == 404:
+        elif response.status == 404:
             raise FlylineItemNotFound()
-        elif response.status != 200:
+        elif response.status == 500:
             raise FlylineServerError()
-        return await response.json()
+
+        res = await response.json()
+        if response.status == 400:
+            raise FlylineBadRequest(res)
+        else:
+            return res
 
     async def __aenter__(self):
         return self

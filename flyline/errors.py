@@ -1,3 +1,7 @@
+class FlylineBadRequest(Exception):
+    pass
+
+
 class AuthenticationFailed(Exception):
     def __init__(self, *args, **kwargs):
         self.message = "Authentication Failed"
