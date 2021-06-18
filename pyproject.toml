@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "flyline"
-version = "0.1.3"
+version = "0.1.4"
 description = "Flyline Client Libraray"
 authors = ["Flyline Development Team <development@flyline.io>"]
 readme = "README.md"
