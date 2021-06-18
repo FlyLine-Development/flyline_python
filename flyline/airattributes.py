@@ -34,13 +34,13 @@ class AirAttributeRouteRequestDataType(TypedDict):
 
 class AirAttributeAPI:
     async def get_airattributes_by_flight_number(self, data: dict) -> AirAttribute:
-        url = f"{self.BASE_URL}/search/amenities/"
+        url = f"{self.BASE_URL}/search/attributes/flight/"
         async with self.session.post(url, json=data) as response:
             res = await self.parse_response(response)
             return AirAttribute.from_json(res)
 
     async def get_airattributes_by_route(self, data: dict) -> AirAttribute:
-        url = f"{self.BASE_URL}/amenities/search/route/"
+        url = f"{self.BASE_URL}/search/attributes/route/"
         async with self.session.post(url, json=data) as response:
             res = await self.parse_response(response)
             return AirAttribute.from_json(res)

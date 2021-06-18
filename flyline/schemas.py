@@ -336,13 +336,6 @@ class TripAttributeSegment(FlylineBaseDataClass):
 
 
 @dataclass(frozen=True)
-class TripAttributeSlice(FlylineBaseDataClass):
-    origin: str
-    destination: str
-    segments: List[TripAttributeSegment]
-
-
-@dataclass(frozen=True)
 class FareAttribute(FlylineBaseDataClass):
     baggage_rules: str
     cancellation_change_fees: str
@@ -352,19 +345,19 @@ class FareAttribute(FlylineBaseDataClass):
 
 
 @dataclass(frozen=True)
-class TripAttribute(FlylineBaseDataClass):
-    carrier: str
-    slices: List[TripAttributeSlice]
+class AirlineWithFareAttribute(FlylineBaseDataClass):
+    iata_code: str
+    name: str
     fare_attributes: FareAttribute
 
 
 @dataclass(frozen=True)
 class AirAttribute(FlylineBaseDataClass):
     cabin_class: CabinClass
-    carriers: List[Airline]
+    carriers: List[AirlineWithFareAttribute]
     airports: List[Airport]
     aircraft: List[Aircraft]
-    trip_attributes: List[TripAttribute]
+    trip_attributes: List[List[TripAttributeSegment]]
 
 
 # Schedule API Schemas

@@ -25,7 +25,6 @@ async def main():
         data = {
             "cabin_class": "economy",
             "slices": [{"departure": {"code": "DFW", "date": tomorrow.isoformat()}, "arrival": {"code": "LAX"}}],
-            "passengers": 1,
         }
         res = await client.get_airattributes_by_route(data=data)
         print(res)
